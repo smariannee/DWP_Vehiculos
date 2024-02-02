@@ -52,6 +52,7 @@
 </template>
   
 <script>
+import instance from '../config/axios';
 export default {
     data() {
         return {
@@ -78,73 +79,12 @@ export default {
                     sortable: true
                 },
                 {
-                    key: "series",
+                    key: "serie",
                     label: "Serie",
                     sortable: true
                 }
             ],
-            cars: [
-                {
-                    brand: 'Nissan',
-                    model: 'Sentra',
-                    year: 2018,
-                    series: '1234567890'
-                },
-                {
-                    brand: 'Chevrolet',
-                    model: 'Aveo',
-                    year: 2019,
-                    series: '0987654321'
-                },
-                {
-                    brand: 'Ford',
-                    model: 'Fiesta',
-                    year: 2017,
-                    series: '1357924680'
-                },
-                {
-                    brand: 'Volkswagen',
-                    model: 'Jetta',
-                    year: 2016,
-                    series: '2468135790'
-                },
-                {
-                    brand: 'Toyota',
-                    model: 'Corolla',
-                    year: 2015,
-                    series: '9876543210'
-                },
-                {
-                    brand: 'Honda',
-                    model: 'Civic',
-                    year: 2014,
-                    series: '0123456789'
-                },
-                {
-                    brand: 'Mazda',
-                    model: '3',
-                    year: 2013,
-                    series: '9876543210'
-                },
-                {
-                    brand: 'Kia',
-                    model: 'Rio',
-                    year: 2012,
-                    series: '0123456789'
-                },
-                {
-                    brand: 'Hyundai',
-                    model: 'Accent',
-                    year: 2011,
-                    series: '9876543210'
-                },
-                {
-                    brand: 'Audi',
-                    model: 'A3',
-                    year: 2010,
-                    series: '0123456789'
-                }
-            ],
+            cars: [{}],
             items: [
                 {
                     text: 'Inicio',
@@ -163,6 +103,20 @@ export default {
             return this.cars.length
         }
     },
+
+    mounted() {
+        this.perPage = 5;
+        try {
+            instance.post("/vehiculos/page", {
+                page: this.currentPage - 1,
+                limit: this.perPage
+            }).then((response) => {
+                this.cars = response.data.content;
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 </script>
   
