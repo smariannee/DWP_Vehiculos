@@ -15,7 +15,7 @@
                         <b-row class="mb-3">
                             <b-col cols="12" md="8">
                                 <b-input-group>
-                                    <b-form-input placeholder="Buscar..." />
+                                    <b-form-input placeholder="Buscar..." v-model="searchValue" />
                                 </b-input-group>
                             </b-col>
                             <b-col cols="12" md="3" class="mt-3 mt-md-0">
@@ -27,8 +27,10 @@
                         </b-row>
                         <b-row>
                             <b-col cols="12">
-                                <b-table id="my-table" :items="cars" :per-page="perPage" :current-page="currentPage"
-                                    responsive="sm" class="px-3" small stripped hover></b-table>
+                                <b-table id="my-table" :fields="fields" :items="cars" :filter="searchValue"
+                                    :per-page="perPage" :current-page="currentPage" sort-icon-left :sort-by.sync="sortBy"
+                                    :sort-desc.sync="sortDesc" label-sort-asc="" label-sort-desc="" responsive="sm"
+                                    class="px-3" small stripped hover></b-table>
                             </b-col>
                             <b-col cols="12">
                                 <label for="perPage">Selecciona la cantidad de registros que deseas mostrar:</label>
@@ -56,6 +58,31 @@ export default {
             perPage: 5,
             currentPage: 1,
             pageOptions: [5, 10, 15, 20, 25, 30],
+            searchValue: "",
+            sortBy: "",
+            sortDesc: false,
+            fields: [
+                {
+                    key: "brand",
+                    label: "Marca",
+                    sortable: true
+                },
+                {
+                    key: "model",
+                    label: "Modelo",
+                    sortable: true
+                },
+                {
+                    key: "year",
+                    label: "Año",
+                    sortable: true
+                },
+                {
+                    key: "series",
+                    label: "Serie",
+                    sortable: true
+                }
+            ],
             cars: [
                 {
                     brand: 'Nissan',
@@ -130,12 +157,12 @@ export default {
             ],
         }
     },
-    
-  computed: {
-    rows() {
-      return this.cars.length
-    }
-  },
+
+    computed: {
+        rows() {
+            return this.cars.length
+        }
+    },
 }
 </script>
   
@@ -143,8 +170,9 @@ export default {
 .icon {
     margin-left: 10px;
 }
+
 .select {
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
 }
 </style>
