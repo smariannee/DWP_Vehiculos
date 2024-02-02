@@ -45,10 +45,10 @@
                                 </b-col>
                                 <b-col cols="12" md="6" class="mt-3">
                                     <b-form-group>
-                                        <label for="series" class="mb-2">Número de serie:</label>
-                                        <b-form-input id="series" type="text" v-model="form.series" trim></b-form-input>
-                                        <b-form-invalid-feedback :state="!errors.state.series">
-                                            {{ errors.message.series }}
+                                        <label for="serie" class="mb-2">Número de serie:</label>
+                                        <b-form-input id="serie" type="text" v-model="form.serie" trim></b-form-input>
+                                        <b-form-invalid-feedback :state="!errors.state.serie">
+                                            {{ errors.message.serie }}
                                         </b-form-invalid-feedback>
                                     </b-form-group>
                                 </b-col>
@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import instance from '../config/axios';
 export default {
     data() {
         return {
@@ -73,20 +74,20 @@ export default {
                 brand: "",
                 model: "",
                 year: "",
-                series: ""
+                serie: ""
             },
             errors: {
                 message: {
                     brand: "",
                     model: "",
                     year: "",
-                    series: ""
+                    serie: ""
                 },
                 state: {
                     brand: false,
                     model: false,
                     year: false,
-                    series: false
+                    serie: false
                 }
             },
             items: [
@@ -104,8 +105,8 @@ export default {
                 }
             ],
             regex: {
-                text: /^[a-zA-Z0-9]+$/,
-                series: /^[a-zA-Z]{4}\d{3}-\d{2}[a-zA-Z]{2}$/
+                text: /^[a-zA-Z0-9\s]+$/,
+                serie: /^[a-zA-Z]{4}\d{3}-\d{2}[a-zA-Z]{2}$/
             },
         }
     },
@@ -149,7 +150,7 @@ export default {
         },
 
         validateForm() {
-            let isValidBrand = false, isValidModel = false, isValidYear = false, isValidSeries = false;
+            let isValidBrand = false, isValidModel = false, isValidYear = false, isValidSerie = false;
             if (this.validateRequired('brand')) {
                 if (this.validateRegex('brand', this.regex.text)) {
                     isValidBrand = true;
@@ -171,18 +172,24 @@ export default {
                     isValidYear = true;
                 }
             }
-            if (this.validateRequired('series')) {
+            if (this.validateRequired('serie')) {
                 console.log("first")
-                if (this.validateRegex('series', this.regex.series)) {
-                    isValidSeries = true;
+                if (this.validateRegex('serie', this.regex.serie)) {
+                    isValidSerie = true;
                 } else {
-                    this.errors.state.series = true;
-                    this.errors.message.series = 'El campo debe tener el formato correspondiente al del número de serie de un vehículo';
+                    this.errors.state.serie = true;
+                    this.errors.message.serie = 'El campo debe tener el formato correspondiente al del número de serie de un vehículo';
                 }
             }
-            if (isValidBrand && isValidModel && isValidYear && isValidSeries) {
-                console.log('Formulario válido');
-                alert('Formulario válido');
+            if (isValidBrand && isValidModel && isValidYear && isValidSerie) {
+                instance.post("/vehiculos",this.form).then((response) => {
+                    alert('Vehículo registrado con éxito');
+                    setTimeout(() => {
+                        this.$router.push({ name: 'car-list' });
+                    }, 1000);
+                }).catch((error) => {
+                    alert('Ocurrió un error al registrar el vehículo');
+                });
             }
         },
     }
